@@ -1,0 +1,33 @@
+version: "2"
+services:
+  nginx:
+      build:
+          context: ./nginx
+      ports:
+          - "8082:80"
+      volumes:
+          - ./SBAdmin:/var/app/public
+  fpm:
+      build:
+          context: ./fpm
+      volumes:
+          - ./SBAdmin:/var/app/public
+      expose:
+          - "9000"
+      environment:
+          - "DB_HOST=db"
+          - "DB_DATABASE=SB_admin"
+  db:
+      image: mariadb
+      environment:
+          - MYSQL_ROOT_PASSWORD=root
+          - MYSQL_DATABASE=SB_admin
+      volumes:
+          - ./database:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+     - PMA_ARBITRARY=1
+     - PMA_HOST=db
+    ports:
+     - 8991:80
